@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест PWA - Дневник вайба</title>
+    <meta name="theme-color" content="#8B5CF6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Vibe Diary">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-180x180.svg">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #8B5CF6, #EC4899);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            text-align: center;
+            max-width: 400px;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .emoji {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        .status {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            backdrop-filter: blur(10px);
+        }
+        .install-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            backdrop-filter: blur(10px);
+        }
+        .install-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="emoji">📔</div>
+        <h1>Дневник вайба</h1>
+        <p>Тестовая страница для проверки PWA на iPhone</p>
+        
+        <div class="status">
+            <h3>Статус PWA:</h3>
+            <p id="pwa-status">Проверяем...</p>
+            <p id="service-worker-status">Service Worker: проверяем...</p>
+            <p id="install-status">Установка: проверяем...</p>
+        </div>
+        
+        <button class="install-btn" id="installBtn" style="display: none;">
+            📱 Установить приложение
+        </button>
+        
+        <div class="status">
+            <h3>Инструкции для iPhone:</h3>
+            <p>1. Нажмите кнопку "Поделиться" внизу экрана</p>
+            <p>2. Выберите "На экран Домой"</p>
+            <p>3. Нажмите "Добавить"</p>
+        </div>
+        
+        <a href="/" class="install-btn">🏠 Перейти к приложению</a>
+    </div>
+
+    <script>
+        let deferredPrompt;
+        
+        // Check PWA status
+        function checkPWAStatus() {
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            
+            document.getElementById('pwa-status').textContent = 
+                isStandalone ? '✅ Работает как PWA' : '❌ Не установлено как PWA';
+            
+            if (isIOS) {
+                document.getElementById('install-status').textContent = 
+                    '📱 iOS: Используйте "Поделиться" → "На экран Домой"';
+            }
+        }
+        
+        // Check Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then((registration) => {
+                    document.getElementById('service-worker-status').textContent = 
+                        '✅ Service Worker зарегистрирован';
+                })
+                .catch((error) => {
+                    document.getElementById('service-worker-status').textContent = 
+                        '❌ Service Worker не работает: ' + error.message;
+                });
+        } else {
+            document.getElementById('service-worker-status').textContent = 
+                '❌ Service Worker не поддерживается';
+        }
+        
+        // Handle install prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installBtn').style.display = 'block';
+            document.getElementById('install-status').textContent = 
+                '✅ Доступна установка через кнопку';
+        });
+        
+        document.getElementById('installBtn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log('Install outcome:', outcome);
+                deferredPrompt = null;
+            }
+        });
+        
+        // Check status on load
+        checkPWAStatus();
+    </script>
+</body>
+</html>

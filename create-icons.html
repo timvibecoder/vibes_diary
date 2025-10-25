@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Icon Generator</title>
+</head>
+<body>
+    <h1>Icon Generator for Vibe Diary</h1>
+    <p>This page will generate PNG icons from SVG for PWA</p>
+    
+    <canvas id="canvas" style="display: none;"></canvas>
+    
+    <div id="downloads"></div>
+    
+    <script>
+        const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+        const svgContent = `
+        <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#8B5CF6;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#EC4899;stop-opacity:1" />
+            </linearGradient>
+            <linearGradient id="bookGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#F8FAFC;stop-opacity:1" />
+            </linearGradient>
+          </defs>
+          
+          <rect width="512" height="512" rx="60" fill="url(#bgGradient)"/>
+          <rect x="120" y="100" width="272" height="312" rx="20" fill="url(#bookGradient)" stroke="#E2E8F0" stroke-width="3"/>
+          
+          <g stroke="#8B5CF6" stroke-width="4" fill="none">
+            <circle cx="140" cy="140" r="6"/>
+            <circle cx="140" cy="160" r="6"/>
+            <circle cx="140" cy="180" r="6"/>
+            <circle cx="140" cy="200" r="6"/>
+            <circle cx="140" cy="220" r="6"/>
+            <circle cx="140" cy="240" r="6"/>
+            <circle cx="140" cy="260" r="6"/>
+            <circle cx="140" cy="280" r="6"/>
+            <circle cx="140" cy="300" r="6"/>
+            <circle cx="140" cy="320" r="6"/>
+            <circle cx="140" cy="340" r="6"/>
+            <circle cx="140" cy="360" r="6"/>
+            <circle cx="140" cy="380" r="6"/>
+          </g>
+          
+          <g stroke="#E2E8F0" stroke-width="2" fill="none">
+            <line x1="180" y1="150" x2="360" y2="150"/>
+            <line x1="180" y1="170" x2="360" y2="170"/>
+            <line x1="180" y1="190" x2="360" y2="190"/>
+            <line x1="180" y1="210" x2="360" y2="210"/>
+            <line x1="180" y1="230" x2="360" y2="230"/>
+            <line x1="180" y1="250" x2="360" y2="250"/>
+            <line x1="180" y1="270" x2="360" y2="270"/>
+            <line x1="180" y1="290" x2="360" y2="290"/>
+            <line x1="180" y1="310" x2="360" y2="310"/>
+            <line x1="180" y1="330" x2="360" y2="330"/>
+            <line x1="180" y1="350" x2="360" y2="350"/>
+            <line x1="180" y1="370" x2="360" y2="370"/>
+          </g>
+          
+          <ellipse cx="256" cy="420" rx="120" ry="20" fill="#000000" opacity="0.1"/>
+        </svg>`;
+        
+        function generateIcon(size) {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = size;
+            canvas.height = size;
+            
+            const img = new Image();
+            const svgBlob = new Blob([svgContent], {type: 'image/svg+xml'});
+            const url = URL.createObjectURL(svgBlob);
+            
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0, size, size);
+                
+                canvas.toBlob(function(blob) {
+                    const link = document.createElement('a');
+                    link.download = `icon-${size}x${size}.png`;
+                    link.href = URL.createObjectURL(blob);
+                    link.textContent = `Download ${size}x${size} icon`;
+                    link.style.display = 'block';
+                    link.style.margin = '10px 0';
+                    
+                    document.getElementById('downloads').appendChild(link);
+                });
+                
+                URL.revokeObjectURL(url);
+            };
+            
+            img.src = url;
+        }
+        
+        // Generate all icons
+        sizes.forEach(size => {
+            setTimeout(() => generateIcon(size), size * 10);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+{
+  "name": "vibe-diary-upgraded",
+  "version": "2.0.0",
+  "description": "Улучшенный дневник настроения с новыми функциями и персистентным хранением данных",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "dev": "npx live-server --port=3000 --open=/",
+    "build": "echo 'No build process needed for vanilla JS'",
+    "test": "echo 'No tests specified yet'"
+  },
+  "keywords": [
+    "mood",
+    "diary", 
+    "tracking",
+    "wellness",
+    "mental-health",
+    "emotions",
+    "analytics"
+  ],
+  "author": "Vibe Diary Team",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/vibe-diary-upgraded.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/vibe-diary-upgraded/issues"
+  },
+  "homepage": "https://github.com/yourusername/vibe-diary-upgraded#readme"
+}
